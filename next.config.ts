@@ -1,8 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Use a custom dist dir so the previous .next (with macOS .DS_Store litter we can't unlink) doesn't break rebuilds.
-  distDir: "build-output",
+  // Local macOS rebuilds choke on .DS_Store litter inside .next — use a custom dir there.
+  // CI (Vercel) expects the default ".next", so don't override when VERCEL is set.
+  ...(process.env.VERCEL ? {} : { distDir: "build-output" }),
   // lightningcss uses a dynamic `require(`../lightningcss.${platform}-${arch}.node`)` template
   // that Turbopack cannot statically resolve. Externalizing keeps it out of the PostCSS bundle.
   serverExternalPackages: ["lightningcss"],
